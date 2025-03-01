@@ -85,7 +85,7 @@ def get_ocean_p(filename,setting,l_arr,shape='el950',quantile=.5,PLOT=True):
         P_cc = data_p['p_cc_dist'][1.0]
     elif setting == 'variable':
         
-        data_S = read_pickle('Stokes_influence_factor.pickle')
+        data_S = read_pickle('./Stokes_influence_factor.pickle')
 
         #get stokes influence factor for the l_arr
         SIF = np.interp(l_arr,np.flip(data_S['l']),np.flip(data_S[shape][quantile]))
@@ -139,7 +139,7 @@ def get_rt_Hinata(shape='el950'):
     '''
     resuspension time scale from Hinata et al. (2017)
     '''
-    data_S = read_pickle('Stokes_influence_factor.pickle')
+    data_S = read_pickle('./Stokes_influence_factor.pickle')
     
     #get stokes influence factor for the l_arr
     wb = np.interp(l_arr,np.flip(data_S['l']),np.flip(data_S['wb_'+shape]))
@@ -292,7 +292,12 @@ def J_ps_ss(p_s_log,afloat_mean,input_week,input_fraction_beach,P_sim_oo,P_sim_o
     T_mat_m,_,_ = create_T_mat2(k_arr,P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc,tau_bc,tau_cb,p_s_,T_NB_N,T_NB_m)
     mass_floating_ss = calculate_steady_state_m2(T_mat_m, input_week,input_fraction_beach)
     res = np.abs(mass_floating_ss - afloat_mean)    
-    return res
+    print(res)
+    if np.isfinite(res):
+        return res
+    else:
+        return 1e6
+    # return res
 
 
 def J_ps_ss2(p_s_log,afloat_mean,input_week,input_fraction_beach,P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc,tau_bc,tau_cb,T_NB_N1,T_NB_m1,T_NB_N2,T_NB_m2,frac1,frac2):
@@ -869,7 +874,7 @@ def calculate_results(ss_setting,i1):
             T_NB_N += N_NB_dt[i2]*np.diag(np.ones(len(k_arr)-i2),-i2) 
             
         # get the transition probabilities between ocean and coast for different particle sizes    
-        P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc = get_ocean_p('Stokes_analysis_-06373046_1590',ss_setting['P_ocean'][i1],l_arr,shape='el950',quantile=ss_setting['P_ocean_q'][i1])
+        P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc = get_ocean_p('./Stokes_analysis_-06373046_1590',ss_setting['P_ocean'][i1],l_arr,shape='el950',quantile=ss_setting['P_ocean_q'][i1])
         
         # get transition probabilities from beach to coast: either predefined, or use Hinata's definition
         if isinstance(ss_setting['tau_bc'][i1], float) or isinstance(ss_setting['tau_bc'][i1], int):
@@ -933,7 +938,7 @@ def calculate_results(ss_setting,i1):
         for i2 in range(len(k_arr)):
             T_NB_N2 += N_NB_dt2[i2]*np.diag(np.ones(len(k_arr)-i2),-i2) 
             
-        P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc = get_ocean_p('Stokes_analysis_-06373046_1590',ss_setting['P_ocean'][i1],l_arr,shape='el950',quantile=ss_setting['P_ocean_q'][i1])
+        P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc = get_ocean_p('./Stokes_analysis_-06373046_1590',ss_setting['P_ocean'][i1],l_arr,shape='el950',quantile=ss_setting['P_ocean_q'][i1])
                        
         
         if isinstance(ss_setting['tau_bc'][i1], float) or isinstance(ss_setting['tau_bc'][i1], int):
@@ -975,7 +980,7 @@ def calculate_results(ss_setting,i1):
 
 #%% main figures in paper
 
-data_S = read_pickle('Stokes_influence_factor.pickle')
+data_S = read_pickle('./Stokes_influence_factor.pickle')
 d_net = 0.25
 q1 = .3 #lower and upper weather quantiles to analyze the effect of size-dependent vertical mixing using the Poulain et al. (2019) model
 q2 = .7
