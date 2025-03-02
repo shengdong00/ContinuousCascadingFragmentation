@@ -291,13 +291,8 @@ def J_ps_ss(p_s_log,afloat_mean,input_week,input_fraction_beach,P_sim_oo,P_sim_o
 
     T_mat_m,_,_ = create_T_mat2(k_arr,P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc,tau_bc,tau_cb,p_s_,T_NB_N,T_NB_m)
     mass_floating_ss = calculate_steady_state_m2(T_mat_m, input_week,input_fraction_beach)
-    res = np.abs(mass_floating_ss - afloat_mean)    
-    print(res)
-    if np.isfinite(res):
-        return res
-    else:
-        return 1e6
-    # return res
+    res = np.abs(mass_floating_ss - afloat_mean)
+    return res
 
 
 def J_ps_ss2(p_s_log,afloat_mean,input_week,input_fraction_beach,P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc,tau_bc,tau_cb,T_NB_N1,T_NB_m1,T_NB_N2,T_NB_m2,frac1,frac2):
@@ -895,8 +890,8 @@ def calculate_results(ss_setting,i1):
         
         # we find the sink probability (p_s) by calculating the steady state solution, and comparing it to the amount of floating waste
         res_ = optimize.minimize_scalar(J_ps_ss,args=(afloat_mean,input_week,input_fraction_beach,
-                                                      P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc,tau_bc,tau_cb,T_NB_N,T_NB_m),
-                                        bracket=(-4,-3),bounds=(None,0))      
+                                                      P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc,tau_bc,tau_cb,T_NB_N,T_NB_m),)
+                                        # bracket=(-4,-3), bounds=(None,0))      
         p_s = 10**(res_.x)    
 
         # now we know all parameters, the transition matrices are set up here
@@ -956,8 +951,8 @@ def calculate_results(ss_setting,i1):
     
         res_ = optimize.minimize_scalar(J_ps_ss2,args=(afloat_mean,input_week,input_fraction_beach,
                                                       P_sim_oo,P_sim_oc,P_sim_co,P_sim_cc,tau_bc,tau_cb,
-                                                      T_NB_N1,T_NB_m1,T_NB_N2,T_NB_m2,EU_plastics_PE,EU_plastics_PP),
-                                        bracket=(-4,-3),bounds=(None,0)) 
+                                                      T_NB_N1,T_NB_m1,T_NB_N2,T_NB_m2,EU_plastics_PE,EU_plastics_PP),)
+                                        # bracket=(-4,-3),bounds=(None,0)) 
         
         p_s = 10**(res_.x)    
         
@@ -1102,9 +1097,9 @@ ax_res_NSD[2,1].set_ylim(1e-3,1e13)
 
 data_dist = {}
 RuizOrejon_dist(data_dist)
-Cozar_dist(data_dist)
+# Cozar_dist(data_dist)
 read_Fok2017(data_dist)
-read_Constant2019(data_dist)
+# read_Constant2019(data_dist)
 
 
 def plot_model_vs_meas_N(ax3,collabel):
@@ -1125,7 +1120,7 @@ def plot_model_vs_meas_N(ax3,collabel):
     ax3[1].loglog(l_arr,normalize_pdf3(l_arr,pdf_N_c_corr2,x_norm=200),':',color=cmap(i1))
     
     #----------measurements ocean
-    ax3[0].loglog(data_dist['CozarMed']['b_midpoint'],normalize_pdf3(data_dist['CozarMed']['b_midpoint'],data_dist['CozarMed']['pdf'],x_norm=200),'.-',color=cmap(i1+1),label='Cozar et al. (2015)')
+    # ax3[0].loglog(data_dist['CozarMed']['b_midpoint'],normalize_pdf3(data_dist['CozarMed']['b_midpoint'],data_dist['CozarMed']['pdf'],x_norm=200),'.-',color=cmap(i1+1),label='Cozar et al. (2015)')
     
     #----------measurements coastal
     ax3[1].loglog(data_dist['RuizOrejon']['b_midpoint'],normalize_pdf3(data_dist['RuizOrejon']['b_midpoint'],data_dist['RuizOrejon']['pdf'],x_norm=200),'.-',color=cmap(i1+2),label='Ruiz-Orejón et al. (2018)')
@@ -1133,10 +1128,10 @@ def plot_model_vs_meas_N(ax3,collabel):
     #---------- measurements beach
     ax3[2].loglog(data_dist['Fok']['b_midpoint'],normalize_pdf3(data_dist['Fok']['b_midpoint'],data_dist['Fok']['pdf_N'],x_norm = data_dist['Fok']['b_midpoint'].max()),'.-',color=cmap(i1+3),label='Fok et al. (2017)')
 
-    ax3[2].loglog(data_dist['Constant1']['b_midpoint'],normalize_pdf3(data_dist['Constant1']['b_midpoint'],data_dist['Constant1']['pdf'],x_norm = data_dist['Constant1']['b_midpoint'].max(),
-                                            y_norm=np.interp(data_dist['Constant1']['b_midpoint'].max(),np.flip(l_arr),np.flip(pdf_N_b_norm))),'.-',color=cmap(i1+5),label='Constant et al. (2019), site 1')
-    ax3[2].loglog(data_dist['Constant1']['b_midpoint'],normalize_pdf3(data_dist['Constant2']['b_midpoint'],data_dist['Constant2']['pdf'],x_norm = data_dist['Constant2']['b_midpoint'].max(),
-                                            y_norm=np.interp(data_dist['Constant2']['b_midpoint'].max(),np.flip(l_arr),np.flip(pdf_N_b_norm))),'.-',color=cmap(i1+6),label='Constant et al. (2019), site 2')
+    # ax3[2].loglog(data_dist['Constant1']['b_midpoint'],normalize_pdf3(data_dist['Constant1']['b_midpoint'],data_dist['Constant1']['pdf'],x_norm = data_dist['Constant1']['b_midpoint'].max(),
+    #                                         y_norm=np.interp(data_dist['Constant1']['b_midpoint'].max(),np.flip(l_arr),np.flip(pdf_N_b_norm))),'.-',color=cmap(i1+5),label='Constant et al. (2019), site 1')
+    # ax3[2].loglog(data_dist['Constant1']['b_midpoint'],normalize_pdf3(data_dist['Constant2']['b_midpoint'],data_dist['Constant2']['pdf'],x_norm = data_dist['Constant2']['b_midpoint'].max(),
+    #                                         y_norm=np.interp(data_dist['Constant2']['b_midpoint'].max(),np.flip(l_arr),np.flip(pdf_N_b_norm))),'.-',color=cmap(i1+6),label='Constant et al. (2019), site 2')
     
     ax3[2].set_xlim(10**(-1.5),220)
     
@@ -1153,8 +1148,10 @@ def plot_model_vs_meas_N(ax3,collabel):
 
     set_plot_labels(ax3,[pdf_N_o,pdf_N_c,pdf_N_b],collabel=collabel)
 
-    alpha_opt,i_min_opt,KS_opt = calculate_powerlaw_parameters(data_dist['CozarMed']['b'],data_dist['CozarMed']['h'],True,plot=False)
-    alpha_fit,sigma_fit = calculate_alpha_sigma(alpha_opt,data_dist['CozarMed']['b'],data_dist['CozarMed']['h'],i_min_opt)
+    plt.show()
+
+    # alpha_opt,i_min_opt,KS_opt = calculate_powerlaw_parameters(data_dist['CozarMed']['b'],data_dist['CozarMed']['h'],True,plot=False)
+    # alpha_fit,sigma_fit = calculate_alpha_sigma(alpha_opt,data_dist['CozarMed']['b'],data_dist['CozarMed']['h'],i_min_opt)
 
     
 
@@ -1188,6 +1185,8 @@ def plot_model_vs_meas_m(ax4,collabel):
     ax4[0].set_ylim(10**(-5),10**(-5+dy_log))
     ax4[1].set_ylim(10**(-5),10**(-5+dy_log))
     ax4[2].set_ylim(10**(-3),10**(-3+dy_log))
+
+    plt.show()
 
 
 plot_model_vs_meas_N(ax_res_obs[:,0],'(a)')
@@ -1269,8 +1268,8 @@ for i1 in range(len(ss['scenario'])):
     for N_,case_ in zip([N_ss_o,N_ss_c,N_ss_b,N_ss_o_m1,N_ss_o_m2,N_ss_c_m1,N_ss_c_m2],cases):
         print('------------case %s ----------------' %case_)
         h = np.flip(N_)
-        alpha_opt,i_min_opt,KS_opt = calculate_powerlaw_parameters(b[:up_to],h[:up_to],lowerbound,plot=False)
-        alpha_fit,sigma_fit = calculate_alpha_sigma(alpha_opt,b[:up_to],h[:up_to],i_min_opt)
+        # alpha_opt,i_min_opt,KS_opt = calculate_powerlaw_parameters(b[:up_to],h[:up_to],lowerbound,plot=False)
+        # alpha_fit,sigma_fit = calculate_alpha_sigma(alpha_opt,b[:up_to],h[:up_to],i_min_opt)
 
 
     print('Summary %s: P_oo %2.1e-%2.1e, P_oc %2.1e-%2.1e, P_co %2.1e-%2.1e, P_cc %2.1e-%2.1e, \
@@ -1313,6 +1312,8 @@ for i1 in range(len(ss['scenario'])):
 
 fig_res.subplots_adjust(wspace=.25)
 
+plt.show()
+
 
 #%% Example plot comparing baseline with size-dependent resuspension
 ss = {}
@@ -1354,3 +1355,5 @@ ax[0].legend(loc='lower left')
 ax[0].text(.7,.85,'Ocean',fontsize=14,transform=ax[0].transAxes, bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
 ax[1].text(.5,.85,'Coastal water',fontsize=14,transform=ax[1].transAxes, bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
 ax[2].text(.7,.85,'Beach',fontsize=14,transform=ax[2].transAxes, bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+
+plt.show()
